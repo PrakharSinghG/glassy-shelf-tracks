@@ -10,7 +10,7 @@ import { useMediaStore } from '@/store/useMediaStore';
 import { searchBooks, GoogleBookResult } from '@/services/googleBooksApi';
 import { searchMoviesAndShows, TMDBResult, getImageUrl } from '@/services/tmdbApi';
 import { searchPodcasts, PodcastResult } from '@/services/podcastApi';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -127,7 +127,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden">
+      <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden border-0 bg-transparent shadow-none [&>button]:hidden">
         <GlassCard className="h-full" hover={false}>
           <div className="p-6">
             {/* Header */}
@@ -141,7 +141,9 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                className="rounded-full"
+                className={`rounded-full hover:bg-white/10 ${
+                  currentTheme === 'dark' ? 'text-white hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                }`}
               >
                 <X size={20} />
               </Button>
@@ -149,43 +151,53 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
 
             {/* Search Input */}
             <div className="relative mb-6">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className={`absolute left-3 top-3 h-4 w-4 ${
+                currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+              }`} />
               <Input
                 placeholder="Search for books, movies, shows, or podcasts..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="pl-10 h-12 text-lg"
+                className={`pl-10 h-12 text-lg border-0 bg-white/10 backdrop-blur-sm ${
+                  currentTheme === 'dark' 
+                    ? 'text-white placeholder:text-gray-400' 
+                    : 'text-gray-900 placeholder:text-gray-500'
+                }`}
               />
             </div>
 
             {/* Tabs */}
             <div className="mb-6">
-              <div className="flex rounded-lg bg-gray-100/50 p-1">
-                {tabs.map((tab) => {
-                  const Icon = tab.icon;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-md text-sm font-medium transition-all ${
-                        activeTab === tab.id
-                          ? 'bg-white shadow-sm text-purple-600'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      <Icon size={16} />
-                      {tab.label}
-                    </button>
-                  );
-                })}
-              </div>
+              <GlassCard className="p-1" hover={false}>
+                <div className="flex rounded-lg overflow-hidden">
+                  {tabs.map((tab) => {
+                    const Icon = tab.icon;
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id as any)}
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-md text-sm font-medium transition-all ${
+                          activeTab === tab.id
+                            ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-sm'
+                            : currentTheme === 'dark'
+                              ? 'text-gray-300 hover:text-white hover:bg-white/10'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-white/20'
+                        }`}
+                      >
+                        <Icon size={16} />
+                        {tab.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </GlassCard>
             </div>
 
             {/* Results */}
             <div className="max-h-96 overflow-y-auto">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
                 </div>
               ) : results.length > 0 ? (
                 <div className="grid gap-4">
@@ -197,7 +209,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
                       >
-                        <GlassCard className="p-4 hover:bg-white/20">
+                        <GlassCard className="p-4">
                           <div className="flex gap-4">
                             <img
                               src={result.image}
@@ -229,7 +241,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                             <Button
                               onClick={() => handleAddItem(result)}
                               size="sm"
-                              className="bg-purple-600 hover:bg-purple-700 text-white flex-shrink-0"
+                              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white flex-shrink-0 border-0"
                             >
                               <Plus size={16} className="mr-1" />
                               Add
