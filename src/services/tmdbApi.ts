@@ -1,5 +1,5 @@
 
-const TMDB_API_KEY = 'your_tmdb_api_key_here'; // You'll need to get this from https://www.themoviedb.org/settings/api
+const TMDB_API_KEY = '81a3a015260553100666d85edfc15522'; // You'll need to get this from https://www.themoviedb.org/settings/api
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
 export interface TMDBResult {
