@@ -1,13 +1,13 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Filter } from 'lucide-react';
+import { ArrowLeft, Search } from 'lucide-react';
 import { useMediaStore, MediaItem } from '@/store/useMediaStore';
 import Layout from '@/components/Layout';
 import GlassCard from '@/components/GlassCard';
 import MediaCard from '@/components/MediaCard';
 import AddMediaModal from '@/components/AddMediaModal';
+import SearchModal from '@/components/SearchModal';
 
 const Shelf = () => {
   const { category } = useParams<{ category: 'books' | 'shows' | 'podcasts' }>();
@@ -15,6 +15,7 @@ const Shelf = () => {
   const { items, currentTheme } = useMediaStore();
   const [activeTab, setActiveTab] = useState<'todo' | 'progress' | 'finished'>('todo');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const categoryItems = items.filter(item => item.category === category);
   const filteredItems = categoryItems.filter(item => item.status === activeTab);
@@ -87,14 +88,29 @@ const Shelf = () => {
               </div>
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsAddModalOpen(true)}
-              className={`px-4 py-2 rounded-lg bg-gradient-to-r ${gradient} text-white font-medium hover:opacity-90 transition-all`}
-            >
-              Add New
-            </motion.button>
+            <div className="flex items-center gap-3">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsSearchModalOpen(true)}
+                className={`p-2 rounded-lg transition-colors ${
+                  currentTheme === 'dark'
+                    ? 'hover:bg-white/10 text-white'
+                    : 'hover:bg-gray-100 text-gray-600'
+                }`}
+              >
+                <Search size={20} />
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsAddModalOpen(true)}
+                className={`px-4 py-2 rounded-lg bg-gradient-to-r ${gradient} text-white font-medium hover:opacity-90 transition-all`}
+              >
+                Add New
+              </motion.button>
+            </div>
           </div>
         </GlassCard>
       </header>
@@ -171,10 +187,10 @@ const Shelf = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={() => setIsSearchModalOpen(true)}
                 className={`px-6 py-3 rounded-lg bg-gradient-to-r ${gradient} text-white font-medium hover:opacity-90 transition-all`}
               >
-                Add Your First {title.slice(0, -1)}
+                Search & Add {title.slice(0, -1)}
               </motion.button>
             </div>
           ) : (
@@ -197,6 +213,11 @@ const Shelf = () => {
       <AddMediaModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+      />
+
+      <SearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
       />
     </Layout>
   );

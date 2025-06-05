@@ -7,11 +7,13 @@ import Layout from '@/components/Layout';
 import Header from '@/components/Header';
 import CategoryCard from '@/components/CategoryCard';
 import AddMediaModal from '@/components/AddMediaModal';
+import SearchModal from '@/components/SearchModal';
 
 const Home = () => {
   const navigate = useNavigate();
   const { items, currentTheme } = useMediaStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const getCategoryCount = (category: 'books' | 'shows' | 'podcasts') => {
     return items.filter(item => item.category === category).length;
@@ -23,7 +25,7 @@ const Home = () => {
     <Layout>
       <Header 
         onAddClick={() => setIsAddModalOpen(true)}
-        onSearchClick={() => {/* TODO: Implement search */}}
+        onSearchClick={() => setIsSearchModalOpen(true)}
       />
 
       <main className="px-4 pb-8">
@@ -99,10 +101,10 @@ const Home = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setIsAddModalOpen(true)}
+              onClick={() => setIsSearchModalOpen(true)}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold text-lg hover:from-purple-600 hover:to-blue-600 transition-all shadow-lg"
             >
-              ✨ Add your first item
+              ✨ Search & add your first item
             </motion.button>
           </motion.div>
         )}
@@ -111,6 +113,11 @@ const Home = () => {
       <AddMediaModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+      />
+
+      <SearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
       />
     </Layout>
   );
