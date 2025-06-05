@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -6,7 +7,6 @@ import { useMediaStore, MediaItem } from '@/store/useMediaStore';
 import Layout from '@/components/Layout';
 import GlassCard from '@/components/GlassCard';
 import MediaCard from '@/components/MediaCard';
-import AddMediaModal from '@/components/AddMediaModal';
 import SearchModal from '@/components/SearchModal';
 
 const Shelf = () => {
@@ -14,7 +14,6 @@ const Shelf = () => {
   const navigate = useNavigate();
   const { items, currentTheme } = useMediaStore();
   const [activeTab, setActiveTab] = useState<'todo' | 'progress' | 'finished'>('todo');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const categoryItems = items.filter(item => item.category === category);
@@ -93,22 +92,10 @@ const Shelf = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsSearchModalOpen(true)}
-                className={`p-2 rounded-lg transition-colors ${
-                  currentTheme === 'dark'
-                    ? 'hover:bg-white/10 text-white'
-                    : 'hover:bg-gray-100 text-gray-600'
-                }`}
+                className={`px-4 py-2 rounded-lg bg-gradient-to-r ${gradient} text-white font-medium hover:opacity-90 transition-all flex items-center gap-2`}
               >
-                <Search size={20} />
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsAddModalOpen(true)}
-                className={`px-4 py-2 rounded-lg bg-gradient-to-r ${gradient} text-white font-medium hover:opacity-90 transition-all`}
-              >
-                Add New
+                <Search size={18} />
+                Search & Add
               </motion.button>
             </div>
           </div>
@@ -194,26 +181,26 @@ const Shelf = () => {
               </motion.button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 isolate">
               {filteredItems.map((item, index) => (
-                <motion.div
+                <div
                   key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  className="relative"
+                  style={{ isolation: 'isolate' }}
                 >
-                  <MediaCard item={item} />
-                </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    <MediaCard item={item} />
+                  </motion.div>
+                </div>
               ))}
             </div>
           )}
         </motion.div>
       </main>
-
-      <AddMediaModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-      />
 
       <SearchModal
         isOpen={isSearchModalOpen}

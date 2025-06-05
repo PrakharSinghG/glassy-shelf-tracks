@@ -5,6 +5,7 @@ import { Search, X, Plus, Book, Film, Podcast } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import GlassCard from './GlassCard';
 import { useMediaStore } from '@/store/useMediaStore';
 import { searchBooks, GoogleBookResult } from '@/services/googleBooksApi';
@@ -33,6 +34,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<'books' | 'shows' | 'podcasts'>('books');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState<{ [key: string]: 'todo' | 'progress' | 'finished' }>({});
   const { addItem, currentTheme } = useMediaStore();
 
   const tabs = [
@@ -104,6 +106,12 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
       }
 
       setResults(searchResults);
+      // Initialize default status for each result
+      const defaultStatuses: { [key: string]: 'todo' | 'progress' | 'finished' } = {};
+      searchResults.forEach(result => {
+        defaultStatuses[result.id] = 'todo';
+      });
+      setSelectedStatuses(defaultStatuses);
     } catch (error) {
       console.error('Search error:', error);
       toast.error('Failed to search. Please try again.');
@@ -113,16 +121,24 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
   };
 
   const handleAddItem = (result: SearchResult) => {
+    const status = selectedStatuses[result.id] || 'todo';
     addItem({
       title: result.title,
       category: result.type,
-      status: 'todo',
+      status: status,
       coverImage: result.image,
       notes: `Added from search: ${result.description.slice(0, 100)}...`,
     });
     
     toast.success(`Added "${result.title}" to your ${result.type}`);
     onClose();
+  };
+
+  const handleStatusChange = (resultId: string, status: 'todo' | 'progress' | 'finished') => {
+    setSelectedStatuses(prev => ({
+      ...prev,
+      [resultId]: status
+    }));
   };
 
   return (
@@ -232,20 +248,39 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                                   by {result.author} {result.year && `(${result.year})`}
                                 </p>
                               )}
-                              <p className={`text-sm line-clamp-2 ${
+                              <p className={`text-sm line-clamp-2 mb-3 ${
                                 currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                               }`}>
                                 {result.description}
                               </p>
+                              <div className="flex items-center gap-3">
+                                <Select
+                                  value={selectedStatuses[result.id] || 'todo'}
+                                  onValueChange={(value: 'todo' | 'progress' | 'finished') => 
+                                    handleStatusChange(result.id, value)
+                                  }
+                                >
+                                  <SelectTrigger className={`w-32 h-8 text-xs border-0 bg-white/10 ${
+                                    currentTheme === 'dark' ? 'text-white' : 'text-gray-900'
+                                  }`}>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="todo">To Do</SelectItem>
+                                    <SelectItem value="progress">In Progress</SelectItem>
+                                    <SelectItem value="finished">Finished</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <Button
+                                  onClick={() => handleAddItem(result)}
+                                  size="sm"
+                                  className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white flex-shrink-0 border-0"
+                                >
+                                  <Plus size={16} className="mr-1" />
+                                  Add
+                                </Button>
+                              </div>
                             </div>
-                            <Button
-                              onClick={() => handleAddItem(result)}
-                              size="sm"
-                              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white flex-shrink-0 border-0"
-                            >
-                              <Plus size={16} className="mr-1" />
-                              Add
-                            </Button>
                           </div>
                         </GlassCard>
                       </motion.div>

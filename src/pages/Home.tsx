@@ -6,13 +6,11 @@ import { useMediaStore } from '@/store/useMediaStore';
 import Layout from '@/components/Layout';
 import Header from '@/components/Header';
 import CategoryCard from '@/components/CategoryCard';
-import AddMediaModal from '@/components/AddMediaModal';
 import SearchModal from '@/components/SearchModal';
 
 const Home = () => {
   const navigate = useNavigate();
   const { items, currentTheme } = useMediaStore();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const getCategoryCount = (category: 'books' | 'shows' | 'podcasts') => {
@@ -24,7 +22,7 @@ const Home = () => {
   return (
     <Layout>
       <Header 
-        onAddClick={() => setIsAddModalOpen(true)}
+        onAddClick={() => setIsSearchModalOpen(true)}
         onSearchClick={() => setIsSearchModalOpen(true)}
       />
 
@@ -109,11 +107,6 @@ const Home = () => {
           </motion.div>
         )}
       </main>
-
-      <AddMediaModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-      />
 
       <SearchModal
         isOpen={isSearchModalOpen}

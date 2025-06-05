@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MoreVertical, Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Check, X } from 'lucide-react';
 import { MediaItem, useMediaStore } from '@/store/useMediaStore';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import GlassCard from './GlassCard';
 
 interface MediaCardProps {
@@ -11,7 +12,9 @@ interface MediaCardProps {
 }
 
 const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
-  const { currentTheme, deleteItem } = useMediaStore();
+  const { currentTheme, deleteItem, updateItem } = useMediaStore();
+  const [isEditingStatus, setIsEditingStatus] = useState(false);
+  const [tempStatus, setTempStatus] = useState<'todo' | 'progress' | 'finished'>(item.status);
 
   const getStatusColor = () => {
     switch (item.status) {
@@ -35,13 +38,23 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
     }
   };
 
+  const handleStatusSave = () => {
+    updateItem(item.id, { status: tempStatus });
+    setIsEditingStatus(false);
+  };
+
+  const handleStatusCancel = () => {
+    setTempStatus(item.status);
+    setIsEditingStatus(false);
+  };
+
   return (
-    <GlassCard className="p-4 h-80">
+    <GlassCard className="p-4 h-80 relative" style={{ isolation: 'isolate' }}>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="h-full flex flex-col"
+        className="h-full flex flex-col relative z-10"
       >
         {/* Cover Image */}
         <div className="relative h-40 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-lg mb-3 overflow-hidden">
@@ -58,9 +71,42 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
           )}
           
           {/* Status badge */}
-          <div className={`absolute top-2 left-2 px-2 py-1 rounded-full bg-gradient-to-r ${getStatusColor()} text-white text-xs font-medium`}>
-            {getStatusText()}
-          </div>
+          {isEditingStatus ? (
+            <div className="absolute top-2 left-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-lg p-1">
+              <Select
+                value={tempStatus}
+                onValueChange={(value: 'todo' | 'progress' | 'finished') => setTempStatus(value)}
+              >
+                <SelectTrigger className="w-20 h-6 text-xs border-0 bg-transparent text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todo">To Do</SelectItem>
+                  <SelectItem value="progress">In Progress</SelectItem>
+                  <SelectItem value="finished">Finished</SelectItem>
+                </SelectContent>
+              </Select>
+              <button
+                onClick={handleStatusSave}
+                className="p-1 rounded bg-green-500 hover:bg-green-600 transition-colors"
+              >
+                <Check size={10} className="text-white" />
+              </button>
+              <button
+                onClick={handleStatusCancel}
+                className="p-1 rounded bg-red-500 hover:bg-red-600 transition-colors"
+              >
+                <X size={10} className="text-white" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsEditingStatus(true)}
+              className={`absolute top-2 left-2 px-2 py-1 rounded-full bg-gradient-to-r ${getStatusColor()} text-white text-xs font-medium hover:opacity-80 transition-opacity`}
+            >
+              {getStatusText()}
+            </button>
+          )}
 
           {/* Actions */}
           <div className="absolute top-2 right-2 flex gap-1">
