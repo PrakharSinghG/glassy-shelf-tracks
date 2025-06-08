@@ -50,12 +50,16 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
     setIsEditingStatus(false);
   };
 
-  const handleCardClick = (e: React.MouseEvent) => {
+  const handleCardClick = () => {
+    navigate(`/media/${item.id}`);
+  };
+
+  const handleInnerClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking on interactive elements
     if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('.select-trigger')) {
       return;
     }
-    navigate(`/media/${item.id}`);
+    handleCardClick();
   };
 
   return (
@@ -65,6 +69,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="h-full flex flex-col relative z-10"
+        onClick={handleInnerClick}
       >
         {/* Cover Image */}
         <div className="relative h-48 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl mb-4 overflow-hidden border border-white/10">
