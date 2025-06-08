@@ -49,7 +49,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
   };
 
   return (
-    <GlassCard className="p-4 h-80 relative" style={{ isolation: 'isolate' }}>
+    <GlassCard className="p-4 h-80 relative isolate">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
