@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Edit, Trash2, Check, X } from 'lucide-react';
@@ -62,7 +61,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
             <img
               src={item.coverImage}
               alt={item.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-4xl">
