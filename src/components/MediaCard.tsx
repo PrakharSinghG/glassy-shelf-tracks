@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Trash2, Check, X } from 'lucide-react';
 import { MediaItem, useMediaStore } from '@/store/useMediaStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,6 +13,7 @@ interface MediaCardProps {
 }
 
 const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
+  const navigate = useNavigate();
   const { currentTheme, deleteItem, updateItem } = useMediaStore();
   const [isEditingStatus, setIsEditingStatus] = useState(false);
   const [tempStatus, setTempStatus] = useState<'todo' | 'progress' | 'finished'>(item.status);
@@ -48,8 +50,16 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
     setIsEditingStatus(false);
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on interactive elements
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('.select-trigger')) {
+      return;
+    }
+    navigate(`/media/${item.id}`);
+  };
+
   return (
-    <GlassCard className="p-6 h-96 relative isolate group">
+    <GlassCard className="p-6 h-96 relative isolate group cursor-pointer" onClick={handleCardClick}>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -80,7 +90,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
                 value={tempStatus}
                 onValueChange={(value: 'todo' | 'progress' | 'finished') => setTempStatus(value)}
               >
-                <SelectTrigger className="w-24 h-7 text-xs border-0 bg-transparent text-white">
+                <SelectTrigger className="w-24 h-7 text-xs border-0 bg-transparent text-white select-trigger">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -116,7 +126,10 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => deleteItem(item.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteItem(item.id);
+              }}
               className="p-2 rounded-xl bg-red-500/30 backdrop-blur-md hover:bg-red-500/40 transition-colors shadow-lg"
             >
               <Trash2 size={16} className="text-white" />
