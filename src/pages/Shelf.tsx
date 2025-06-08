@@ -1,18 +1,18 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search } from 'lucide-react';
-import { useMediaStore, MediaItem } from '@/store/useMediaStore';
+import { useParams } from 'react-router-dom';
+import { useMediaStore } from '@/store/useMediaStore';
 import Layout from '@/components/Layout';
-import GlassCard from '@/components/GlassCard';
-import MediaCard from '@/components/MediaCard';
+import ShelfHeader from '@/components/ShelfHeader';
+import StatusTabs from '@/components/StatusTabs';
+import EmptyState from '@/components/EmptyState';
+import MediaGrid from '@/components/MediaGrid';
 import SearchModal from '@/components/SearchModal';
 
 const Shelf = () => {
   const { category } = useParams<{ category: 'books' | 'shows' | 'podcasts' }>();
-  const navigate = useNavigate();
-  const { items, currentTheme } = useMediaStore();
+  const { items } = useMediaStore();
   const [activeTab, setActiveTab] = useState<'todo' | 'progress' | 'finished'>('todo');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
@@ -22,17 +22,17 @@ const Shelf = () => {
   const getCategoryInfo = () => {
     switch (category) {
       case 'books':
-        return { title: 'Books', emoji: '📖', gradient: 'from-emerald-500 to-teal-500' };
+        return { title: 'Books', gradient: 'from-emerald-500 to-teal-500' };
       case 'shows':
-        return { title: 'Shows & Movies', emoji: '🎬', gradient: 'from-red-500 to-pink-500' };
+        return { title: 'Shows & Movies', gradient: 'from-red-500 to-pink-500' };
       case 'podcasts':
-        return { title: 'Podcasts', emoji: '🎧', gradient: 'from-orange-500 to-yellow-500' };
+        return { title: 'Podcasts', gradient: 'from-orange-500 to-yellow-500' };
       default:
-        return { title: 'Media', emoji: '📱', gradient: 'from-purple-500 to-blue-500' };
+        return { title: 'Media', gradient: 'from-purple-500 to-blue-500' };
     }
   };
 
-  const { title, emoji, gradient } = getCategoryInfo();
+  const { title, gradient } = getCategoryInfo();
 
   const getTabCounts = () => {
     return {
@@ -44,99 +44,22 @@ const Shelf = () => {
 
   const tabCounts = getTabCounts();
 
-  const tabs = [
-    { id: 'todo', label: 'To Do', count: tabCounts.todo },
-    { id: 'progress', label: 'In Progress', count: tabCounts.progress },
-    { id: 'finished', label: 'Finished', count: tabCounts.finished },
-  ];
-
   return (
     <Layout>
-      {/* Header */}
-      <header className="sticky top-0 z-50 p-4">
-        <GlassCard className="p-4" hover={false}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/')}
-                className={`p-2 rounded-lg transition-colors ${
-                  currentTheme === 'dark'
-                    ? 'hover:bg-white/10 text-white'
-                    : 'hover:bg-gray-100 text-gray-600'
-                }`}
-              >
-                <ArrowLeft size={20} />
-              </motion.button>
-              
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{emoji}</span>
-                <div>
-                  <h1 className={`text-xl font-bold ${
-                    currentTheme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    {title}
-                  </h1>
-                  <p className={`text-sm ${
-                    currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                  }`}>
-                    {categoryItems.length} {categoryItems.length === 1 ? 'item' : 'items'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsSearchModalOpen(true)}
-                className={`px-4 py-2 rounded-lg bg-gradient-to-r ${gradient} text-white font-medium hover:opacity-90 transition-all flex items-center gap-2`}
-              >
-                <Search size={18} />
-                Search & Add
-              </motion.button>
-            </div>
-          </div>
-        </GlassCard>
-      </header>
+      <ShelfHeader
+        category={category}
+        itemCount={categoryItems.length}
+        onSearchClick={() => setIsSearchModalOpen(true)}
+      />
 
       <main className="px-4 pb-8">
-        {/* Tabs */}
-        <div className="mb-6">
-          <GlassCard className="p-1" hover={false}>
-            <div className="flex rounded-lg overflow-hidden">
-              {tabs.map((tab) => (
-                <motion.button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex-1 px-4 py-3 text-sm font-medium transition-all relative ${
-                    activeTab === tab.id
-                      ? `bg-gradient-to-r ${gradient} text-white`
-                      : currentTheme === 'dark'
-                        ? 'text-gray-300 hover:text-white hover:bg-white/10'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
-                  }`}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {tab.label}
-                  {tab.count > 0 && (
-                    <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-                      activeTab === tab.id
-                        ? 'bg-white/20'
-                        : 'bg-gray-200/50'
-                    }`}>
-                      {tab.count}
-                    </span>
-                  )}
-                </motion.button>
-              ))}
-            </div>
-          </GlassCard>
-        </div>
+        <StatusTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          tabCounts={tabCounts}
+          gradient={gradient}
+        />
 
-        {/* Media Grid */}
         <motion.div
           key={activeTab}
           initial={{ opacity: 0, y: 20 }}
@@ -144,60 +67,14 @@ const Shelf = () => {
           transition={{ duration: 0.3 }}
         >
           {filteredItems.length === 0 ? (
-            <div className="text-center py-12">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="mb-6"
-              >
-                <div className="text-6xl mb-4">
-                  {activeTab === 'todo' ? '📝' : activeTab === 'progress' ? '⏳' : '🎉'}
-                </div>
-                <h3 className={`text-xl font-semibold mb-2 ${
-                  currentTheme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
-                  No {tabs.find(t => t.id === activeTab)?.label.toLowerCase()} items
-                </h3>
-                <p className={`text-sm ${
-                  currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  {activeTab === 'todo' 
-                    ? 'Add something to your to-do list'
-                    : activeTab === 'progress'
-                      ? 'Start working on something!'
-                      : 'Complete some items to see them here'
-                  }
-                </p>
-              </motion.div>
-              
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsSearchModalOpen(true)}
-                className={`px-6 py-3 rounded-lg bg-gradient-to-r ${gradient} text-white font-medium hover:opacity-90 transition-all`}
-              >
-                Search & Add {title.slice(0, -1)}
-              </motion.button>
-            </div>
+            <EmptyState
+              activeTab={activeTab}
+              onSearchClick={() => setIsSearchModalOpen(true)}
+              categoryTitle={title}
+              gradient={gradient}
+            />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 isolate">
-              {filteredItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="relative"
-                  style={{ isolation: 'isolate' }}
-                >
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                  >
-                    <MediaCard item={item} />
-                  </motion.div>
-                </div>
-              ))}
-            </div>
+            <MediaGrid items={filteredItems} />
           )}
         </motion.div>
       </main>
