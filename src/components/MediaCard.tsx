@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Edit, Trash2, Check, X } from 'lucide-react';
+import { Trash2, Check, X } from 'lucide-react';
 import { MediaItem, useMediaStore } from '@/store/useMediaStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import GlassCard from './GlassCard';
@@ -62,7 +62,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
             <img
               src={item.coverImage}
               alt={item.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-5xl opacity-60">
@@ -111,16 +111,8 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, onEdit }) => {
             </button>
           )}
 
-          {/* Actions */}
+          {/* Actions - Only delete button now */}
           <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => onEdit?.(item)}
-              className="p-2 rounded-xl bg-white/20 backdrop-blur-md hover:bg-white/30 transition-colors shadow-lg"
-            >
-              <Edit size={16} className="text-white" />
-            </motion.button>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}

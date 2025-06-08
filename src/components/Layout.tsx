@@ -26,8 +26,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div
       className={`min-h-screen transition-all duration-700 ${
         currentTheme === 'dark'
-          ? 'bg-gradient-to-br from-slate-900 via-indigo-900/80 to-purple-900/90'
-          : 'bg-gradient-to-br from-blue-50 via-indigo-50/80 to-purple-50/70'
+          ? 'bg-gradient-to-br from-gray-900 via-purple-900/70 to-blue-900/80'
+          : 'bg-gradient-to-br from-blue-50 via-purple-50/50 to-pink-50/60'
       }`}
     >
       <div className="relative min-h-screen overflow-hidden">
