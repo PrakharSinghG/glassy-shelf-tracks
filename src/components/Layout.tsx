@@ -24,46 +24,69 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div
-      className={`min-h-screen transition-all duration-500 ${
+      className={`min-h-screen transition-all duration-700 ${
         currentTheme === 'dark'
-          ? 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900'
-          : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'
+          ? 'bg-gradient-to-br from-slate-900 via-indigo-900/80 to-purple-900/90'
+          : 'bg-gradient-to-br from-blue-50 via-indigo-50/80 to-purple-50/70'
       }`}
     >
-      <div className="relative min-h-screen">
+      <div className="relative min-h-screen overflow-hidden">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           className="relative z-10"
         >
           {children}
         </motion.div>
         
-        {/* Floating orbs for extra visual appeal */}
+        {/* Enhanced floating orbs */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <motion.div
-            className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl"
+            className={`absolute top-1/4 left-1/4 w-80 h-80 rounded-full blur-3xl ${
+              currentTheme === 'dark' ? 'bg-purple-500/20' : 'bg-purple-400/30'
+            }`}
             animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
+              scale: [1, 1.3, 1],
+              opacity: [0.2, 0.4, 0.2],
+              x: [0, 50, 0],
+              y: [0, -30, 0],
             }}
             transition={{
-              duration: 8,
+              duration: 12,
               repeat: Infinity,
               ease: "easeInOut",
             }}
           />
           <motion.div
-            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
+            className={`absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl ${
+              currentTheme === 'dark' ? 'bg-blue-500/15' : 'bg-blue-400/25'
+            }`}
             animate={{
               scale: [1.2, 1, 1.2],
-              opacity: [0.2, 0.4, 0.2],
+              opacity: [0.15, 0.3, 0.15],
+              x: [0, -40, 0],
+              y: [0, 40, 0],
             }}
             transition={{
-              duration: 10,
+              duration: 15,
               repeat: Infinity,
               ease: "easeInOut",
+            }}
+          />
+          <motion.div
+            className={`absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-2xl ${
+              currentTheme === 'dark' ? 'bg-indigo-500/10' : 'bg-indigo-400/20'
+            }`}
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.1, 0.25, 0.1],
+              rotate: [0, 180, 360],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear",
             }}
           />
         </div>

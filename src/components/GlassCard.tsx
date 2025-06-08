@@ -20,15 +20,15 @@ const GlassCard: React.FC<GlassCardProps> = ({
   const { currentTheme, glassIntensity } = useMediaStore();
 
   const getGlassClasses = () => {
-    const baseClasses = 'backdrop-blur border border-white/20';
+    const baseClasses = 'backdrop-blur border';
     const themeClasses = currentTheme === 'dark' 
-      ? 'bg-white/10 shadow-xl' 
-      : 'bg-white/30 shadow-lg';
+      ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/20' 
+      : 'bg-white/40 border-white/30 shadow-xl shadow-black/5';
     
     const intensityClasses = {
-      high: 'backdrop-blur-xl',
-      default: 'backdrop-blur-md',
-      low: 'backdrop-blur-sm',
+      high: 'backdrop-blur-2xl',
+      default: 'backdrop-blur-xl',
+      low: 'backdrop-blur-lg',
     };
 
     return `${baseClasses} ${themeClasses} ${intensityClasses[glassIntensity]}`;
@@ -37,7 +37,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
   return (
     <motion.div
       className={cn(
-        'rounded-xl',
+        'rounded-2xl transition-all duration-300',
         getGlassClasses(),
         hover && 'cursor-pointer',
         className
@@ -46,13 +46,15 @@ const GlassCard: React.FC<GlassCardProps> = ({
         hover
           ? {
               scale: 1.02,
-              y: -4,
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              y: -6,
+              boxShadow: currentTheme === 'dark' 
+                ? '0 32px 64px -12px rgba(0, 0, 0, 0.4)' 
+                : '0 32px 64px -12px rgba(0, 0, 0, 0.15)',
             }
           : {}
       }
       whileTap={hover ? { scale: 0.98 } : {}}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       onClick={onClick}
     >
       {children}
